@@ -62,6 +62,15 @@ class TrieNode {
 
   // A map of children, where the key is the next character in the key, and the value is the next TrieNode.
   std::map<char, std::shared_ptr<const TrieNode>> children_;
+  auto HasChild(const char &c) const -> bool { return children_.find(c) != children_.end(); }
+
+  auto GetChildNode(const char &c) const -> std::shared_ptr<const TrieNode> {
+    if (!HasChild(c)) {
+      return nullptr;
+    }
+    return children_.find(c)->second;
+  }
+
 
   // Indicates if the node is the terminal node.
   bool is_value_node_{false};
@@ -124,6 +133,14 @@ class Trie {
   // Remove the key from the trie. If the key does not exist, return the original trie.
   // Otherwise, returns the new trie.
   auto Remove(std::string_view key) const -> Trie;
+
+
+  template <typename T>
+  auto PutNode(std::shared_ptr<const TrieNode> node, std::string_view key, T value)const
+    -> std::shared_ptr<const TrieNode>;
+  auto RemoveNode(const std::shared_ptr<const TrieNode>& node,
+                    std::string_view key,
+                    size_t depth) const -> std::shared_ptr<const TrieNode>;
 };
 
 }  // namespace bustub
