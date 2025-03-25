@@ -5,53 +5,48 @@
 namespace bustub {
 template <class T>
 auto Trie::Get(std::string_view key) const -> const T * {
-  //throw NotImplementedException("Trie::Get is not implemented.");
+  // throw NotImplementedException("Trie::Get is not implemented.");
 
   // You should walk through the trie to find the node corresponding to the key. If the node doesn't exist, return
   // nullptr. After you find the node, you should use `dynamic_cast` to cast it to `const TrieNodeWithValue<T> *`. If
   // dynamic_cast returns `nullptr`, it means the type of the value is mismatched, and you should return nullptr.
   // Otherwise, return the value.
-  if(root_==nullptr) {
+  if (root_ == nullptr) {
     return nullptr;
   }
-  auto cur_node=root_;
-  for (auto ch:key) {
-    auto it=cur_node->children_.find(ch);
-    if (it!=cur_node->children_.end()) {
-      cur_node=it->second;
-    }else {
+  auto cur_node = root_;
+  for (auto ch : key) {
+    auto it = cur_node->children_.find(ch);
+    if (it != cur_node->children_.end()) {
+      cur_node = it->second;
+    } else {
       return nullptr;
     }
   }
   if (cur_node->is_value_node_) {
-    auto cur_node_with_value  =std::dynamic_pointer_cast<const TrieNodeWithValue<T>>(cur_node);
-    if (cur_node_with_value!=nullptr) {
+    auto cur_node_with_value = std::dynamic_pointer_cast<const TrieNodeWithValue<T>>(cur_node);
+    if (cur_node_with_value != nullptr) {
       return cur_node_with_value->value_.get();
     }
   }
   return nullptr;
-
 }
 
 template <class T>
 auto Trie::Put(std::string_view key, T value) const -> Trie {
   // Note that `T` might be a non-copyable type. Always use `std::move` when creating `shared_ptr` on that value.
-  //throw NotImplementedException("Trie::Put is not implemented.");
+  // throw NotImplementedException("Trie::Put is not implemented.");
 
   // You should walk through the trie and create new nodes if necessary. If the node corresponding to the key already
   // exists, you should create a new `TrieNodeWithValue`.
   auto new_root = PutNode(root_, key, std::move(value));
   return Trie(new_root);
-
 }
-template<class T>
+template <class T>
 auto Trie::PutNode(std::shared_ptr<const TrieNode> node, std::string_view key, T value) const
     -> std::shared_ptr<const TrieNode> {
-
   // Copy-On-Write: 克隆当前节点，或创建新节点
-  std::unique_ptr<TrieNode> copy_node = (node == nullptr)
-      ? std::make_unique<TrieNode>()
-      : node->Clone();
+  std::unique_ptr<TrieNode> copy_node = (node == nullptr) ? std::make_unique<TrieNode>() : node->Clone();
 
   // Base Case：如果 key 走到头，插入 TrieNodeWithValue
   if (key.empty()) {
@@ -75,22 +70,18 @@ auto Trie::PutNode(std::shared_ptr<const TrieNode> node, std::string_view key, T
   return std::shared_ptr<const TrieNode>(std::move(copy_node));
 }
 
-
 auto Trie::Remove(std::string_view key) const -> Trie {
   auto new_root = RemoveNode(root_, key, 0);
 
   if (new_root == nullptr || (new_root->children_.empty() && !new_root->is_value_node_)) {
-    return {}; // 返回空 Trie
+    return {};  // 返回空 Trie
   }
 
   return Trie(new_root);
 }
 
-auto Trie::RemoveNode(
-    const std::shared_ptr<const TrieNode>& node,
-    std::string_view key,
-    size_t depth) const -> std::shared_ptr<const TrieNode> {
-
+auto Trie::RemoveNode(const std::shared_ptr<const TrieNode> &node, std::string_view key, size_t depth) const
+    -> std::shared_ptr<const TrieNode> {
   if (node == nullptr) {
     return nullptr;
   }
@@ -105,7 +96,7 @@ auto Trie::RemoveNode(
     new_node->is_value_node_ = false;
 
     if (new_node->children_.empty()) {
-      return nullptr; // 当前节点没有子节点，也不是 value 节点，可以删除
+      return nullptr;  // 当前节点没有子节点，也不是 value 节点，可以删除
     }
 
     return new_node;
@@ -114,7 +105,7 @@ auto Trie::RemoveNode(
   char c = key[depth];
 
   if (!node->HasChild(c)) {
-    return node; // key 不存在，返回自己
+    return node;  // key 不存在，返回自己
   }
 
   // 递归处理子节点
@@ -130,16 +121,11 @@ auto Trie::RemoveNode(
   }
 
   if (new_node->children_.empty() && !new_node->is_value_node_) {
-    return nullptr; // 当前节点可以删除
+    return nullptr;  // 当前节点可以删除
   }
 
   return new_node;
 }
-
-
-
-
-
 
 // Below are explicit instantiation of template functions.
 //

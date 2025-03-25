@@ -71,7 +71,6 @@ class TrieNode {
     return children_.find(c)->second;
   }
 
-
   // Indicates if the node is the terminal node.
   bool is_value_node_{false};
 
@@ -134,13 +133,11 @@ class Trie {
   // Otherwise, returns the new trie.
   auto Remove(std::string_view key) const -> Trie;
 
-
   template <typename T>
-  auto PutNode(std::shared_ptr<const TrieNode> node, std::string_view key, T value)const
-    -> std::shared_ptr<const TrieNode>;
-  auto RemoveNode(const std::shared_ptr<const TrieNode>& node,
-                    std::string_view key,
-                    size_t depth) const -> std::shared_ptr<const TrieNode>;
+  auto PutNode(std::shared_ptr<const TrieNode> node, std::string_view key, T value) const
+      -> std::shared_ptr<const TrieNode>;
+  auto RemoveNode(const std::shared_ptr<const TrieNode> &node, std::string_view key, size_t depth) const
+      -> std::shared_ptr<const TrieNode>;
 };
 
 }  // namespace bustub
